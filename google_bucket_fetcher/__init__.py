@@ -3,3 +3,5 @@
 __author__ = """Eduardo Oliveira Menezes"""
 __email__ = 'eduardomenezes.dev@gmail.com'
 __version__ = '0.1.0'
+
+from google_bucket_fetcher import GCS
