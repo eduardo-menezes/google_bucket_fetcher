@@ -158,5 +158,8 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+extensions = [
+    "pandas"
+]
 
 
