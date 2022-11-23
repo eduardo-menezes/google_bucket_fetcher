@@ -1,15 +1,11 @@
-"""Main module."""
-#%%
-
 import pandas as pd
 from google.cloud import storage
 from google.oauth2 import service_account
-import json
 
 class GCS:
     
     
-    def __init__(self, bucket_name, dataset_name,table,filename, date_extract,extension):
+    def __init__(self, bucket_name, dataset_name,table,filename, date_extract,extension): #(self, bucket_name, dataset_name,table,filename, date_extract,extension)
         self.bucket_name = bucket_name
         self.dataset_name = dataset_name
         self.table = table
@@ -41,11 +37,11 @@ class GCS:
             ['https://www.googleapis.com/auth/cloud-platform'])
         return credentials
 
-    def dataframe_tobucket(self,df,path_processed,credentials):
-        df.to_csv(path_processed, storage_options={"token": credentials}, index=False)
+    def dataframe_tobucket(self,df,path_processed,credentials,*args,**kwargs):
+        df.to_csv(path_processed, storage_options={"token": credentials}, index=False,*args,**kwargs)
     
        
-    def dataframe_frombucket(self,credentials):
+    def dataframe_frombucket(self,credentials, *args,**kwargs):
         project_id = credentials.project_id
         storage_client = storage.Client(project=project_id, credentials=credentials)
         processed_data = storage_client.bucket(self.bucket_name)
@@ -54,18 +50,12 @@ class GCS:
         for file in list(processed_data.list_blobs(prefix=f'{self.dataset_name}/{self.table}/')):
             file_path="gs://{}/{}".format(file.bucket.name, file.name)
             print(file_path)
-            my_dataframe_list.append(pd.read_csv(file_path, storage_options={"token":credentials}))
+            my_dataframe_list.append(pd.read_csv(file_path, storage_options={"token":credentials},  *args,**kwargs))
             
         df = pd.concat(my_dataframe_list)
         return df
     
-    def dataframe_tobigquery(self,df,path,credentials, method='replace'):
+    def dataframe_tobigquery(self,df,path,credentials, method='replace',*args,**kwargs ):
         project_id = credentials.project_id
-        df.to_gbq(destination_table=path,project_id=project_id,credentials=credentials, if_exists=method)
+        df.to_gbq(destination_table=path,project_id=project_id,credentials=credentials, if_exists=method,*args,**kwargs)
         return 'table has been sent to bigquery'
-
-
-
-
-
-#%%
